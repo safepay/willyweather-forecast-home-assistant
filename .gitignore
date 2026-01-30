@@ -23,6 +23,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.claude/
 
 # PyInstaller
 *.manifest
@@ -57,3 +58,4 @@ Thumbs.db
 env/
 venv/
 ENV/
+
