@@ -17,6 +17,7 @@ from .const import (
     DEFAULT_SENSOR_PREFIX,
     DOMAIN,
     MANUFACTURER,
+    VERSION,
 )
 from .coordinator import WillyWeatherDataUpdateCoordinator
 
@@ -99,6 +100,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         identifiers={(DOMAIN, station_id)},
         manufacturer=MANUFACTURER,
         name=device_name,
+        sw_version=VERSION,
     )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

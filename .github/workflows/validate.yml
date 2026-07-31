@@ -1,0 +1,24 @@
+name: Validate
+
+on:
+  # Branch pushes are covered by the pull_request trigger, so push is limited to
+  # master to stop every commit on an open PR running this twice.
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  validate-hacs:
+    runs-on: "ubuntu-latest"
+    name: Validate with HACS Action
+    steps:
+      - name: HACS validation
+        uses: "hacs/action@main"
+        with:
+          category: "integration"
+          # Skipped until the integration is added to the home-assistant/brands
+          # repository, which is a prerequisite for the HACS default list.
+          ignore: "brands"
