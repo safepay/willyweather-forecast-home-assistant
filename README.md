@@ -391,4 +391,6 @@ This integration uses the [WillyWeather API](https://www.willyweather.com.au/inf
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the GNU General Public License v3.0. See
+[LICENSE](https://github.com/safepay/willyweather-forecast-home-assistant/blob/master/LICENSE)
+for the full text.
