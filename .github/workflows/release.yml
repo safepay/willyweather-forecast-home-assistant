@@ -7,6 +7,11 @@ name: Release
 #   4. create the GitHub release HACS reads, with notes generated from the
 #      merged PRs and commits since the previous release
 #
+# Choosing "none" as the bump skips steps 1-3 and publishes the version already
+# in manifest.json. That is the way out of a release that was deleted or never
+# finished: the bump commit is already on the branch, so bumping again would
+# spend a version number to fix a missing tag.
+#
 # Versions are always plain X.Y.Z, including pre-releases. A pre-release is the
 # same version number as the eventual stable one, distinguished only by GitHub's
 # pre-release flag, so promoting it needs no rebuild: see .github/RELEASING.md.
@@ -14,12 +19,13 @@ on:
   workflow_dispatch:
     inputs:
       bump:
-        description: "Which part of the version to increment"
+        description: "Which part of the version to increment (none = re-publish the current version, for when a release was lost)"
         type: choice
         options:
           - patch
           - minor
           - major
+          - none
         default: patch
       title:
         description: "Release title (leave blank to use the version number)"
@@ -71,23 +77,50 @@ jobs:
           BUMP: ${{ inputs.bump }}
         run: |
           current="$(jq -r '.version' "$MANIFEST")"
-          IFS='.' read -r major minor patch <<< "$current"
-          case "$BUMP" in
-            major) major=$((major + 1)); minor=0; patch=0 ;;
-            minor) minor=$((minor + 1)); patch=0 ;;
-            patch) patch=$((patch + 1)) ;;
-          esac
-          next="${major}.${minor}.${patch}"
 
+          if [ "$BUMP" = "none" ]; then
+            # Re-publish whatever is already in the manifest. This is the escape
+            # hatch for a release that was deleted or never completed: the bump
+            # commit is already on the branch, so bumping again would burn a
+            # version number for no reason.
+            next="$current"
+          else
+            IFS='.' read -r major minor patch <<< "$current"
+            case "$BUMP" in
+              major) major=$((major + 1)); minor=0; patch=0 ;;
+              minor) minor=$((minor + 1)); patch=0 ;;
+              patch) patch=$((patch + 1)) ;;
+            esac
+            next="${major}.${minor}.${patch}"
+          fi
+
+          reuse_tag=false
           if git rev-parse -q --verify "refs/tags/v${next}" >/dev/null; then
-            echo "::error::Tag v${next} already exists. Bump a different part of the version."
-            exit 1
+            # An existing tag is normally a mistake, but when re-publishing it is
+            # expected -- as long as it points at what is being released.
+            if [ "$BUMP" = "none" ] \
+              && [ "$(git rev-parse "refs/tags/v${next}^{commit}")" = "$(git rev-parse HEAD)" ]; then
+              reuse_tag=true
+            elif [ "$BUMP" = "none" ]; then
+              echo "::error::Tag v${next} exists but does not point at HEAD. Delete it or release a new version."
+              exit 1
+            else
+              echo "::error::Tag v${next} already exists. Bump a different part of the version."
+              exit 1
+            fi
           fi
 
           echo "next=${next}" >> "$GITHUB_OUTPUT"
-          echo "Releasing **${current} -> ${next}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "reuse_tag=${reuse_tag}" >> "$GITHUB_OUTPUT"
+
+          if [ "$BUMP" = "none" ]; then
+            echo "Re-publishing **${next}** (no version change)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Releasing **${current} -> ${next}**" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Bump the version in manifest.json and const.py
+        if: ${{ inputs.bump != 'none' }}
         env:
           NEXT: ${{ steps.version.outputs.next }}
         run: |
@@ -110,15 +143,30 @@ jobs:
       - name: Commit and tag
         env:
           NEXT: ${{ steps.version.outputs.next }}
+          BUMP: ${{ inputs.bump }}
+          REUSE_TAG: ${{ steps.version.outputs.reuse_tag }}
         run: |
+          if [ "$REUSE_TAG" = "true" ]; then
+            echo "Tag v${NEXT} already points at HEAD; reusing it."
+            exit 0
+          fi
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "chore: bump version to ${NEXT}"
-          git tag -a "v${NEXT}" -m "v${NEXT}"
-          # --atomic: the branch and the tag land together, or neither does.
-          git push --atomic origin \
-            "HEAD:refs/heads/${GITHUB_REF_NAME}" \
-            "refs/tags/v${NEXT}"
+
+          if [ "$BUMP" = "none" ]; then
+            # Nothing was edited, so there is no bump commit to push -- only the
+            # tag, pointing at the release that is already on the branch.
+            git tag -a "v${NEXT}" -m "v${NEXT}"
+            git push origin "refs/tags/v${NEXT}"
+          else
+            git commit -am "chore: bump version to ${NEXT}"
+            git tag -a "v${NEXT}" -m "v${NEXT}"
+            # --atomic: the branch and the tag land together, or neither does.
+            git push --atomic origin \
+              "HEAD:refs/heads/${GITHUB_REF_NAME}" \
+              "refs/tags/v${NEXT}"
+          fi
 
       - name: Create the GitHub release
         env:
