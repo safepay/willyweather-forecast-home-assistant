@@ -1,5 +1,9 @@
 # WillyWeather Integration for Home Assistant
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/custom-components/hacs) [![willyweather](https://img.shields.io/github/release/safepay/sensor.willyweather.svg)](https://github.com/safepay/sensor.willyweather) ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
+[![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/v/release/safepay/willyweather-forecast-home-assistant)](https://github.com/safepay/willyweather-forecast-home-assistant/releases)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2025.3.0+-blue.svg)](https://www.home-assistant.io/)
+[![License](https://img.shields.io/github/license/safepay/willyweather-forecast-home-assistant)](LICENSE)
+![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
 
 A custom Home Assistant integration providing comprehensive weather data from WillyWeather Australia.
 
@@ -21,15 +25,28 @@ This differs from the BoM integration by providing separate binary sensors for w
 - **Forecast Data**: Daily (7 days) and hourly (3 days) with comprehensive data points
 - **Separate Update Intervals**: Configure different update frequencies for observational vs forecast data to reduce API usage
 
+## Requirements
+
+- Home Assistant **2025.3.0** or newer
+- A WillyWeather API key (see [Getting an API Key](#getting-an-api-key) below)
+
 ## Installation
 
-### HACS (Recommended, but not yet available!)
-1. Add this repository as a custom repository in HACS
-2. Search for "WillyWeather" in HACS
-3. Click **Install**
+### HACS (Recommended)
+
+This integration is not in the HACS default store yet, so it has to be added as a
+custom repository first. That is a one-off step — updates arrive through HACS as
+normal afterwards.
+
+1. In HACS, open the **⋮** menu (top right) → **Custom repositories**
+2. Add `https://github.com/safepay/willyweather-forecast-home-assistant` with type **Integration**
+3. Search for "WillyWeather" in HACS and click **Download**
 4. Restart Home Assistant
 
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=safepay&repository=willyweather-forecast-home-assistant&category=integration)
+
 ### Manual Installation
+
 1. Copy the `custom_components/willyweather` folder to your Home Assistant's `custom_components` directory
 2. Restart Home Assistant
 
@@ -55,11 +72,11 @@ You need a WillyWeather API key to use this integration:
 6. Add "Region Precis" for the optional long forecast text sensor for today.
 
 ### Full API Configuration Example
-![WillyWeather API Config](https://github.com/safepay/sensor.willyweather/blob/master/willyweather_api_config.png?raw=true)
+![WillyWeather API Config](https://raw.githubusercontent.com/safepay/willyweather-forecast-home-assistant/master/willyweather_api_config.png)
 
 ### Minimal API Configuration Example
 (For areas without tide and swell information)
-![WillyWeather API Config](https://github.com/safepay/sensor.willyweather/blob/master/willyweather_api_config_minimal.png?raw=true)
+![WillyWeather API Config](https://raw.githubusercontent.com/safepay/willyweather-forecast-home-assistant/master/willyweather_api_config_minimal.png)
 
 ### Available Configuration Options
 
@@ -349,7 +366,7 @@ If automatic station detection fails:
 4. Manually enter this ID during setup
 
 ### API Rate Limits
-The free WillyWeather API has rate limits. The integration updates every 10 minutes by default.
+The WillyWeather API is billed per call and your plan has a call limit. By default the integration fetches observational data every 10 minutes and forecast data every 30 minutes during the day, which works out at roughly 7,900 calls a month with warnings enabled — see [Update Interval Configuration](#update-interval-configuration) to tune this.
 
 ### Warnings Not Showing
 Warning sensors only appear when warnings are active in your area. During periods without active warnings, the sensors will show as "off" with no attributes.
@@ -357,8 +374,16 @@ Warning sensors only appear when warnings are active in your area. During period
 ## Support
 
 For issues, feature requests, or questions:
-- [GitHub Issues](https://github.com/safepay/sensor.willyweather/issues)
+
+- [GitHub Issues](https://github.com/safepay/willyweather-forecast-home-assistant/issues)
 - [Home Assistant Community Forum](https://community.home-assistant.io/)
+
+## Contributing
+
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for
+development setup, what to check before opening a pull request, and the rules
+around changing entities. Releases are cut by maintainers using the process in
+[.github/RELEASING.md](.github/RELEASING.md).
 
 ## Credits
 
