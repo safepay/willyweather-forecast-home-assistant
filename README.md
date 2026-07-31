@@ -2,7 +2,7 @@
 [![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/v/release/safepay/willyweather-forecast-home-assistant)](https://github.com/safepay/willyweather-forecast-home-assistant/releases)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2025.3.0+-blue.svg)](https://www.home-assistant.io/)
-[![License](https://img.shields.io/github/license/safepay/willyweather-forecast-home-assistant)](LICENSE)
+[![License](https://img.shields.io/github/license/safepay/willyweather-forecast-home-assistant)](https://github.com/safepay/willyweather-forecast-home-assistant/blob/master/LICENSE)
 ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
 
 A custom Home Assistant integration providing comprehensive weather data from WillyWeather Australia.
@@ -380,10 +380,10 @@ For issues, feature requests, or questions:
 
 ## Contributing
 
-Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for
+Contributions are welcome — see [CONTRIBUTING.md](https://github.com/safepay/willyweather-forecast-home-assistant/blob/master/CONTRIBUTING.md) for
 development setup, what to check before opening a pull request, and the rules
 around changing entities. Releases are cut by maintainers using the process in
-[.github/RELEASING.md](.github/RELEASING.md).
+[.github/RELEASING.md](https://github.com/safepay/willyweather-forecast-home-assistant/blob/master/.github/RELEASING.md).
 
 ## Credits
 
