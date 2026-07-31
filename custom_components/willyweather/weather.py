@@ -34,6 +34,8 @@ from .const import (
     DEFAULT_SENSOR_PREFIX,
     DOMAIN,
     MANUFACTURER,
+    MODEL_STATION,
+    VERSION,
 )
 from .coordinator import (
     WillyWeatherConfigEntry,
@@ -97,7 +99,9 @@ class WillyWeatherEntity(SingleCoordinatorWeatherEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, self._station_id)},
             manufacturer=MANUFACTURER,
+            model=MODEL_STATION,
             name=self._station_name,
+            sw_version=VERSION,
         )
 
     @property

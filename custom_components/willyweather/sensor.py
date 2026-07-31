@@ -30,6 +30,8 @@ from .const import (
     DOMAIN,
     FORECAST_SENSOR_TYPES,
     MANUFACTURER,
+    MODEL_FORECAST_SENSORS,
+    MODEL_SENSORS,
     SENSOR_TYPES,
     SUNMOON_SENSOR_TYPES,
     SWELL_SENSOR_TYPES,
@@ -222,6 +224,7 @@ class WillyWeatherSensor(CoordinatorEntity, SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, f"{station_id}_sensors")},
             manufacturer=MANUFACTURER,
+            model=MODEL_SENSORS,
             name=f"{station_name} Sensors",
             via_device=(DOMAIN, station_id),
         )
@@ -326,6 +329,7 @@ class WillyWeatherSunMoonSensor(CoordinatorEntity, SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, f"{station_id}_sensors")},
             manufacturer=MANUFACTURER,
+            model=MODEL_SENSORS,
             name=f"{station_name} Sensors",
             via_device=(DOMAIN, station_id),
             )
@@ -483,6 +487,7 @@ class WillyWeatherTideSensor(CoordinatorEntity, SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, f"{station_id}_sensors")},
             manufacturer=MANUFACTURER,
+            model=MODEL_SENSORS,
             name=f"{station_name} Sensors",
             via_device=(DOMAIN, station_id),
             )
@@ -641,6 +646,7 @@ class WillyWeatherUVSensor(CoordinatorEntity, SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, f"{station_id}_sensors")},
             manufacturer=MANUFACTURER,
+            model=MODEL_SENSORS,
             name=f"{station_name} Sensors",
             via_device=(DOMAIN, station_id),
             )
@@ -751,6 +757,7 @@ class WillyWeatherWindForecastSensor(CoordinatorEntity, SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, f"{station_id}_sensors")},
             manufacturer=MANUFACTURER,
+            model=MODEL_SENSORS,
             name=f"{station_name} Sensors",
             via_device=(DOMAIN, station_id),
             )
@@ -846,6 +853,7 @@ class WillyWeatherSwellSensor(CoordinatorEntity, SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, f"{station_id}_sensors")},
             manufacturer=MANUFACTURER,
+            model=MODEL_SENSORS,
             name=f"{station_name} Sensors",
             via_device=(DOMAIN, station_id),
             )
@@ -983,6 +991,7 @@ class WillyWeatherForecastSensor(CoordinatorEntity, SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, f"{station_id}_forecast_sensors")},
             manufacturer=MANUFACTURER,
+            model=MODEL_FORECAST_SENSORS,
             name=f"{station_name} Forecast Sensors",
             via_device=(DOMAIN, station_id),
         )
