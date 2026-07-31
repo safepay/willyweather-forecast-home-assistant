@@ -25,6 +25,15 @@ MANUFACTURER: Final = "WillyWeather"
 # HACS installed. Keep the `VERSION = "X.Y.Z"` form -- the workflow greps for it.
 VERSION: Final = "2.4.2"
 
+# Device models. The device list picks its subtitle as
+# `model || sw_version || manufacturer`, so without a model the station device
+# would show the bare version number while its children showed the manufacturer.
+# Naming each device's role is more use than either.
+MODEL_STATION: Final = "Weather Station"
+MODEL_SENSORS: Final = "Observations"
+MODEL_BINARY_SENSORS: Final = "Warnings"
+MODEL_FORECAST_SENSORS: Final = "Forecast"
+
 # Configuration
 CONF_STATION_ID: Final = "station_id"
 CONF_STATION_NAME: Final = "station_name"

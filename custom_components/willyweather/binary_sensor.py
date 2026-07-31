@@ -22,6 +22,7 @@ from .const import (
     DEFAULT_SENSOR_PREFIX,
     DOMAIN,
     MANUFACTURER,
+    MODEL_BINARY_SENSORS,
     WARNING_BINARY_SENSOR_TYPES,
 )
 from .coordinator import (
@@ -111,6 +112,7 @@ class WillyWeatherWarningBinarySensor(CoordinatorEntity, BinarySensorEntity):
             entry_type=DeviceEntryType.SERVICE,
             identifiers={(DOMAIN, f"{station_id}_binary_sensors")},
             manufacturer=MANUFACTURER,
+            model=MODEL_BINARY_SENSORS,
             name=f"{station_name} Binary Sensors",
             via_device=(DOMAIN, station_id),
         )
