@@ -9,10 +9,12 @@ to be bumped, tagged or written by hand.
    **Hassfest** and **Validate** are green.
 2. Go to **Actions → Release → Run workflow**.
 3. Choose the bump:
-   - **patch** — bug fixes (`2.4.1` → `2.4.2`)
-   - **minor** — new sensors, new features (`2.4.1` → `2.5.0`)
+   - **patch** — bug fixes (`2.4.2` → `2.4.3`)
+   - **minor** — new sensors, new features (`2.4.2` → `2.5.0`)
    - **major** — breaking changes, e.g. renamed entities or requiring users to
      reconfigure
+   - **none** — do not change the version, just publish what is already in
+     `manifest.json`. Only for recovering a lost release; see below.
 4. Optionally give it a **title**. Left blank it uses the version number;
    a one-line summary of the change reads better in the releases list.
 5. Tick **prerelease** to ship it to beta testers only — see below.
@@ -28,6 +30,26 @@ generated from the PRs and commits since the last one.
 
 HACS picks the release up from that point. Because the tag points at the bump
 commit, the version HACS installs always matches the tag.
+
+## Recovering a lost release
+
+If a release is deleted, or the workflow fails after pushing the bump commit,
+the version in `manifest.json` has already moved on while no release exists for
+it. Running the workflow again with a normal bump would spend a *second* version
+number to fix a missing tag, and leave the first one permanently skipped.
+
+Run it with bump **none** instead. It publishes the version already in
+`manifest.json`: no bump, no commit, just the tag and the release.
+
+Before running it, make sure the tag for that version either does not exist or
+still points at the bump commit — if you deleted the release but not the tag,
+the workflow reuses the tag; if you deleted both, it recreates it. A tag that
+exists but points somewhere else is rejected, since that means the branch has
+moved since and the tag no longer describes what would be shipped.
+
+`none` is only for this situation. Publishing two different releases with the
+same version number would leave HACS users on whichever they installed first,
+with no way to tell them apart.
 
 ## Pre-releases
 
