@@ -1,4 +1,9 @@
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/custom-components/hacs) [![willyweather](https://img.shields.io/github/release/safepay/sensor.willyweather.svg)](https://github.com/safepay/sensor.willyweather) ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
+# WillyWeather Integration
+
+[![HACS](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/v/release/safepay/willyweather-forecast-home-assistant)](https://github.com/safepay/willyweather-forecast-home-assistant/releases)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2025.3.0+-blue.svg)](https://www.home-assistant.io/)
+![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
 
 A custom Home Assistant integration providing comprehensive weather data from WillyWeather Australia.
 
@@ -14,16 +19,26 @@ This differs from the BoM integration by providing separate binary sensors for w
 - **Weather Warnings**: Binary sensors for active storm, flood, fire, heat, wind, frost warnings and more
 - **Automatic Station Detection**: Automatically finds the closest WillyWeather station based on your Home Assistant location
 - **Configurable Data**: Enable/disable optional sensors through the UI
-- **Configurable Update Intervals**: Set different update frequencies for day and night to manage API usage
+- **Forecast Sensors**: Optional per-day sensors (0-6), preconfigured for the Platinum Weather Card
+- **Configurable Update Intervals**: Separate day/night frequencies for observational and forecast data to manage API usage
 - **Forecast Data**: Daily (7 days) and hourly (3 days) with comprehensive data points
 
 ## API Usage Management
 
-The integration includes configurable day/night update intervals to help manage API usage:
-- Default: 10-minute updates during the day, 30-minute updates at night
-- Fully customizable through the UI (5-60 minutes day, 10-120 minutes night)
+The WillyWeather API is paid (roughly $1.20/month for a typical configuration), so
+observational and forecast data are polled on **separate** schedules — current
+conditions stay fresh while forecasts, which change far less often, are fetched
+less frequently and cached in between.
+
+- Observational defaults: 10 minutes during the day, 30 minutes at night
+- Forecast defaults: 30 minutes during the day, 60 minutes at night
 - Automatically switches between day and night modes
-- Each update makes 2-3 API calls depending on configuration
-- Typical usage with defaults: ~10,000 calls/month
+- 1-2 API calls per observational update, 2-3 when a forecast refresh is due
+- Typical usage with defaults: ~7,900 calls/month
 
 Configure update intervals during setup or anytime through **Settings** → **Devices & Services** → **WillyWeather** → **Configure**.
+
+## Requirements
+
+- Home Assistant 2025.3.0 or newer
+- A [WillyWeather API key](https://www.willyweather.com.au/info/api.html)
