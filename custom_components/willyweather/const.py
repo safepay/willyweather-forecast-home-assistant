@@ -23,7 +23,7 @@ MANUFACTURER: Final = "WillyWeather"
 # Reported as sw_version on the device pages. The release workflow bumps this in
 # lockstep with manifest.json, so the version shown in HA always matches the one
 # HACS installed. Keep the `VERSION = "X.Y.Z"` form -- the workflow greps for it.
-VERSION: Final = "2.4.1"
+VERSION: Final = "2.4.2"
 
 # Configuration
 CONF_STATION_ID: Final = "station_id"
