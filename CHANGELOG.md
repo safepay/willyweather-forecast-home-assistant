@@ -5,6 +5,27 @@ All notable changes to the WillyWeather Home Assistant integration will be docum
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.2] - 2026-08-01
+
+### Fixed
+- **Home Assistant 2026.8 compatibility**: The integration would have stopped loading on Home Assistant 2026.8
+  - The update coordinator is now tied to the config entry, which also stops a refresh timer being left running on every reload
+  - Requires Home Assistant 2025.3.0 or newer
+- **Device list subtitles**: Each device now names its role — Weather Station, Observations, Warnings, Forecast — instead of showing a bare version number or repeating the manufacturer
+
+### Changed
+- Uses Home Assistant's shared HTTP session rather than opening one per config entry
+- Documentation links now resolve when the README is viewed inside HACS
+- Licence stated correctly as GPL-3.0
+
+### Added
+- Releases are bumped, tagged and published by a workflow (see `.github/RELEASING.md`)
+
+## [2.4.1] - 2026-01-30
+
+### Fixed
+- **Setup form link**: The API registration link on the first setup step rendered as a raw `{api_register_url}` placeholder instead of the URL
+
 ## [2.4.0] - 2025-12-12
 
 ### Changed
