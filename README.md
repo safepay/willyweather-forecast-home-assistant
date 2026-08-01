@@ -56,8 +56,12 @@ normal afterwards.
 3. Search for "WillyWeather"
 4. Follow the setup wizard:
    - **Step 1**: Enter your WillyWeather API key (optional: specify a station ID, or leave blank for auto-detection)
-   - **Step 2**: Select which sensors to include
-   - **Step 3**: Select to include binary warning sensors
+   - **Step 2**: Set the entity prefix (defaults to `ww_` plus the station name, e.g. `ww_melbourne`)
+   - **Step 3**: Select which observational sensors to include
+   - **Step 4**: Choose forecast data options
+   - **Step 5**: Select to include binary warning sensors
+   - **Step 6**: Select which per-day forecast sensors to create
+   - **Step 7**: Set the update intervals
 
 ## Configuration
 
@@ -82,6 +86,7 @@ You need a WillyWeather API key to use this integration:
 
 When setting up, you can configure:
 
+- **Entity prefix** - Applied to every entity ID and friendly name (default: `ww_` plus the station name, e.g. `ww_melbourne`)
 - **Include observational sensors** - Enables current weather measurement sensors (default: Yes)
 - **Include wind forecast data** - Includes wind speed and direction forecasts (default: Yes)
 - **Include UV index sensors** - Includes UV index and alert levels (default: Yes)
@@ -122,11 +127,11 @@ The default sensor selection is optimized for the popular [Platinum Weather Card
 - Each sensor updates automatically with the forecast data
 - Configurable: Choose 1-7 days of forecast (default: 5 days)
 
-**Example sensors created:**
-- `sensor.willyweather_icon_0`
-- `sensor.willyweather_short_forecast_1`
-- `sensor.willyweather_max_temperature_2`
-- `sensor.willyweather_rain_probability_3`
+**Example sensors created** (station "Melbourne", default prefix):
+- `sensor.ww_melbourne_icon_0`
+- `sensor.ww_melbourne_short_forecast_1`
+- `sensor.ww_melbourne_max_temperature_2`
+- `sensor.ww_melbourne_rain_probability_3`
 
 All forecast sensors are grouped under a separate "Forecast Sensors" device for easy organization.
 
@@ -216,7 +221,7 @@ service: weather.get_forecasts
 data:
   type: daily
 target:
-  entity_id: weather.willyweather_
+  entity_id: weather.ww_melbourne
 ```
 
 ### Observational Sensors (Current Conditions)
@@ -244,8 +249,8 @@ When observational sensors are enabled, the following sensors are created:
 - **Rain Today** - Total rainfall today in mm
 - **Rain Since 9am** - Rainfall since 9am in mm
 
-#### Today's Forecast
-- **Today's Forecast** - Short forecast text for today (e.g., "Rainy")
+#### Forecast Text
+- **Precis** - Short forecast text for today (e.g., "Rainy")
 - **Today's Extended Forecast** - Detailed narrative forecast for today (optional)
   - State: Truncated to 255 characters (e.g., "Cloudy. High chance of showers, most likely later this evening. Light winds...")
   - **full_text** attribute - Complete untruncated forecast text
@@ -300,14 +305,10 @@ Available warning types:
 - **Flood Warning**
 - **Fire Warning**
 - **Heat Warning**
-- **Wind Warning**
-- **Weather Warning**
 - **Strong Wind Warning**
-- **Thunderstorm Warning**
 - **Frost Warning**
 - **Rain Warning**
 - **Snow Warning**
-- **Hail Warning**
 - **Cyclone Warning**
 - **Tsunami Warning**
 - **Fog Warning**
@@ -331,17 +332,17 @@ automation:
   - alias: "Severe Weather Alert"
     trigger:
       - platform: state
-        entity_id: binary_sensor.storm_warning
+        entity_id: binary_sensor.ww_melbourne_storm_warning
         to: "on"
     condition:
       - condition: template
-        value_template: "{{ state_attr('binary_sensor.storm_warning', 'severity') == 'red' }}"
+        value_template: "{{ state_attr('binary_sensor.ww_melbourne_storm_warning', 'severity') == 'red' }}"
     action:
       - service: notify.mobile_app
         data:
           message: >
             SEVERE STORM WARNING! 
-            {{ state_attr('binary_sensor.storm_warning', 'warning_count') }} warning(s) active.
+            {{ state_attr('binary_sensor.ww_melbourne_storm_warning', 'warning_count') }} warning(s) active.
           title: "⚠️ Weather Alert"
 ```
 
