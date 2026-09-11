@@ -5,6 +5,7 @@ from datetime import datetime
 import logging
 from typing import Any
 from homeassistant.util import dt as dt_util
+from homeassistant.util import slugify
 
 from homeassistant.components.weather import (
     Forecast,
@@ -57,7 +58,12 @@ async def async_setup_entry(
     # use empty string. New installations will have it set to DEFAULT_SENSOR_PREFIX ("ww_").
     sensor_prefix = entry.options.get(CONF_SENSOR_PREFIX, "" if CONF_SENSOR_PREFIX not in entry.options else DEFAULT_SENSOR_PREFIX)
 
-    async_add_entities([WillyWeatherEntity(coordinator, entry, sensor_prefix)])
+    entity = WillyWeatherEntity(coordinator, entry, sensor_prefix)
+    # See the note in sensor.py: without this a new entity is registered as
+    # weather.melbourne_ww_melbourne rather than weather.ww_melbourne.
+    entity.entity_id = f"weather.{slugify(entity.name)}"
+
+    async_add_entities([entity])
 
 
 class WillyWeatherEntity(SingleCoordinatorWeatherEntity):

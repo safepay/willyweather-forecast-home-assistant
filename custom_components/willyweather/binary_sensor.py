@@ -11,6 +11,7 @@ from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
+from homeassistant.util import slugify
 
 from .const import (
     ATTRIBUTION,
@@ -69,6 +70,12 @@ async def async_setup_entry(
                         sensor_prefix,
                     )
                 )
+
+    # See the note in sensor.py: without this a new entity is registered as
+    # binary_sensor.melbourne_binary_sensors_ww_melbourne_storm_warning rather
+    # than binary_sensor.ww_melbourne_storm_warning.
+    for entity in entities:
+        entity.entity_id = f"binary_sensor.{slugify(entity.name)}"
 
     async_add_entities(entities)
 
