@@ -58,10 +58,12 @@ async def async_setup_entry(
     # use empty string. New installations will have it set to DEFAULT_SENSOR_PREFIX ("ww_").
     sensor_prefix = entry.options.get(CONF_SENSOR_PREFIX, "" if CONF_SENSOR_PREFIX not in entry.options else DEFAULT_SENSOR_PREFIX)
 
+    station_name = entry.data.get(CONF_STATION_NAME, f"Station {entry.data[CONF_STATION_ID]}")
+
     entity = WillyWeatherEntity(coordinator, entry, sensor_prefix)
-    # See the note in sensor.py: without this a new entity is registered as
-    # weather.melbourne_ww_melbourne rather than weather.ww_melbourne.
-    entity.entity_id = f"weather.{slugify(entity.name)}"
+    # The entity takes its name from the device, so its id comes from the
+    # configured prefix, or the station when no prefix is set.
+    entity.entity_id = f"weather.{slugify(sensor_prefix or station_name)}"
 
     async_add_entities([entity])
 
@@ -91,13 +93,12 @@ class WillyWeatherEntity(SingleCoordinatorWeatherEntity):
         self._sensor_prefix = sensor_prefix
         self._entry = entry
 
-        # Format prefix for display: "ww_melbourne" -> "WW Melbourne"
+        # The friendly name is the station; the configured prefix stays in the
+        # entity id only.
+        self._attr_name = self._station_name
         if sensor_prefix:
-            self._attr_name = sensor_prefix.replace('_', ' ').title().replace('Ww ', 'WW ')
-            # Use prefix in unique_id for entity_id generation
             self._attr_unique_id = f"{sensor_prefix}_weather"
         else:
-            self._attr_name = self._station_name
             # Backward compatibility: use station_id when no prefix
             self._attr_unique_id = f"{self._station_id}_weather"
 
