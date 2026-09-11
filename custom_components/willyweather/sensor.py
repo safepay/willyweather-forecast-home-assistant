@@ -12,6 +12,7 @@ from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.util import dt as dt_util
+from homeassistant.util import slugify
 
 from .const import (
     ATTRIBUTION,
@@ -177,6 +178,16 @@ async def async_setup_entry(
                             sensor_prefix,
                         )
                     )
+
+    # Home Assistant builds a new entity's id from the device name followed by
+    # the entity name, and drops the device name only when the entity name
+    # starts with it. The names here carry the prefix rather than the station,
+    # so a new entity would be registered as
+    # sensor.melbourne_sensors_ww_melbourne_temperature. Ask for the id these
+    # have always had. It is used only when an entity is first created; one
+    # already in the registry keeps the id it has.
+    for entity in entities:
+        entity.entity_id = f"sensor.{slugify(entity.name)}"
 
     async_add_entities(entities)
 
