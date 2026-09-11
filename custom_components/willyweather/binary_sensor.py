@@ -71,12 +71,6 @@ async def async_setup_entry(
                     )
                 )
 
-    # See the note in sensor.py: without this a new entity is registered as
-    # binary_sensor.melbourne_binary_sensors_ww_melbourne_storm_warning rather
-    # than binary_sensor.ww_melbourne_storm_warning.
-    for entity in entities:
-        entity.entity_id = f"binary_sensor.{slugify(entity.name)}"
-
     async_add_entities(entities)
 
 
@@ -102,14 +96,14 @@ class WillyWeatherWarningBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
         sensor_info = WARNING_BINARY_SENSOR_TYPES[sensor_type]
 
-        # Format prefix for display: "ww_melbourne" -> "WW Melbourne"
+        label = sensor_info['name']
+        # The name carries the station rather than the configured prefix, which
+        # stays in the entity id.
+        self._attr_name = f"{station_name} {label}"
+        self.entity_id = f"binary_sensor.{slugify(f'{sensor_prefix} {label}' if sensor_prefix else label)}"
         if sensor_prefix:
-            display_prefix = sensor_prefix.replace('_', ' ').title().replace('Ww ', 'WW ')
-            self._attr_name = f"{display_prefix} {sensor_info['name']}"
-            # Use prefix in unique_id for entity_id generation
             self._attr_unique_id = f"{sensor_prefix}_{sensor_type}"
         else:
-            self._attr_name = sensor_info['name']
             # Backward compatibility: use station_id when no prefix
             self._attr_unique_id = f"{station_id}_{sensor_type}"
         self._attr_icon = sensor_info["icon"]

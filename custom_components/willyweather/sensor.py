@@ -179,16 +179,6 @@ async def async_setup_entry(
                         )
                     )
 
-    # Home Assistant builds a new entity's id from the device name followed by
-    # the entity name, and drops the device name only when the entity name
-    # starts with it. The names here carry the prefix rather than the station,
-    # so a new entity would be registered as
-    # sensor.melbourne_sensors_ww_melbourne_temperature. Ask for the id these
-    # have always had. It is used only when an entity is first created; one
-    # already in the registry keeps the id it has.
-    for entity in entities:
-        entity.entity_id = f"sensor.{slugify(entity.name)}"
-
     async_add_entities(entities)
 
 
@@ -216,14 +206,14 @@ class WillyWeatherSensor(CoordinatorEntity, SensorEntity):
 
         sensor_info = sensor_types_dict[sensor_type]
 
-        # Format prefix for display: "ww_melbourne" -> "WW Melbourne"
+        label = sensor_info['name']
+        # The name carries the station rather than the configured prefix, which
+        # stays in the entity id.
+        self._attr_name = f"{station_name} {label}"
+        self.entity_id = f"sensor.{slugify(f'{sensor_prefix} {label}' if sensor_prefix else label)}"
         if sensor_prefix:
-            display_prefix = sensor_prefix.replace('_', ' ').title().replace('Ww ', 'WW ')
-            self._attr_name = f"{display_prefix} {sensor_info['name']}"
-            # Use prefix in unique_id for entity_id generation
             self._attr_unique_id = f"{sensor_prefix}_{sensor_type}"
         else:
-            self._attr_name = sensor_info['name']
             # Backward compatibility: use station_id when no prefix
             self._attr_unique_id = f"{station_id}_{sensor_type}"
         self._attr_native_unit_of_measurement = sensor_info["unit"]
@@ -328,7 +318,9 @@ class WillyWeatherSunMoonSensor(CoordinatorEntity, SensorEntity):
         self._sensor_prefix = sensor_prefix
 
         sensor_info = SUNMOON_SENSOR_TYPES[sensor_type]
-        self._attr_name = sensor_info['name']
+        label = sensor_info['name']
+        self._attr_name = f"{station_name} {label}"
+        self.entity_id = f"sensor.{slugify(f'{sensor_prefix} {label}' if sensor_prefix else label)}"
         self._attr_unique_id = f"{station_id}_{sensor_type}"
         self._attr_native_unit_of_measurement = sensor_info.get("unit")
         # Don't set icon here for moon_phase - we'll do it dynamically
@@ -488,7 +480,9 @@ class WillyWeatherTideSensor(CoordinatorEntity, SensorEntity):
         self._sensor_prefix = sensor_prefix
 
         sensor_info = TIDES_SENSOR_TYPES[sensor_type]
-        self._attr_name = sensor_info['name']
+        label = sensor_info['name']
+        self._attr_name = f"{station_name} {label}"
+        self.entity_id = f"sensor.{slugify(f'{sensor_prefix} {label}' if sensor_prefix else label)}"
         self._attr_unique_id = f"{station_id}_{sensor_type}"
         self._attr_native_unit_of_measurement = sensor_info.get("unit")
         self._attr_icon = sensor_info["icon"]
@@ -646,7 +640,9 @@ class WillyWeatherUVSensor(CoordinatorEntity, SensorEntity):
         self._sensor_prefix = sensor_prefix
 
         sensor_info = UV_SENSOR_TYPES[sensor_type]
-        self._attr_name = sensor_info['name']
+        label = sensor_info['name']
+        self._attr_name = f"{station_name} {label}"
+        self.entity_id = f"sensor.{slugify(f'{sensor_prefix} {label}' if sensor_prefix else label)}"
         self._attr_unique_id = f"{station_id}_{sensor_type}"
         self._attr_native_unit_of_measurement = sensor_info.get("unit")
         self._attr_icon = sensor_info["icon"]
@@ -758,7 +754,9 @@ class WillyWeatherWindForecastSensor(CoordinatorEntity, SensorEntity):
         self._sensor_prefix = sensor_prefix
 
         sensor_info = WIND_FORECAST_TYPES[sensor_type]
-        self._attr_name = sensor_info['name']
+        label = sensor_info['name']
+        self._attr_name = f"{station_name} {label}"
+        self.entity_id = f"sensor.{slugify(f'{sensor_prefix} {label}' if sensor_prefix else label)}"
         self._attr_unique_id = f"{station_id}_{sensor_type}"
         self._attr_native_unit_of_measurement = sensor_info.get("unit")
         self._attr_icon = sensor_info["icon"]
@@ -855,7 +853,9 @@ class WillyWeatherSwellSensor(CoordinatorEntity, SensorEntity):
         self._sensor_prefix = sensor_prefix
 
         sensor_info = SWELL_SENSOR_TYPES[sensor_type]
-        self._attr_name = sensor_info['name']
+        label = sensor_info['name']
+        self._attr_name = f"{station_name} {label}"
+        self.entity_id = f"sensor.{slugify(f'{sensor_prefix} {label}' if sensor_prefix else label)}"
         self._attr_unique_id = f"{station_id}_{sensor_type}"
         self._attr_native_unit_of_measurement = sensor_info.get("unit")
         self._attr_icon = sensor_info["icon"]
@@ -982,14 +982,12 @@ class WillyWeatherForecastSensor(CoordinatorEntity, SensorEntity):
         sensor_config = FORECAST_SENSOR_TYPES[sensor_type]
         day_label = f"{forecast_day}"
 
-        # Format prefix for display: "ww_melbourne" -> "WW Melbourne"
+        label = f"{sensor_config['name']} {day_label}"
+        self._attr_name = f"{station_name} {label}"
+        self.entity_id = f"sensor.{slugify(f'{sensor_prefix} {label}' if sensor_prefix else label)}"
         if sensor_prefix:
-            display_prefix = sensor_prefix.replace('_', ' ').title().replace('Ww ', 'WW ')
-            self._attr_name = f"{display_prefix} {sensor_config['name']} {day_label}"
-            # Use prefix in unique_id for entity_id generation
             self._attr_unique_id = f"{sensor_prefix}_forecast_{sensor_type}_day_{forecast_day}"
         else:
-            self._attr_name = f"{sensor_config['name']} {day_label}"
             # Backward compatibility: use station_id when no prefix
             self._attr_unique_id = f"{station_id}_forecast_{sensor_type}_day_{forecast_day}"
         self._attr_native_unit_of_measurement = sensor_config.get("unit")
